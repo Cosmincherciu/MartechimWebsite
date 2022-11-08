@@ -7,6 +7,11 @@ import {HiOutlineMenu} from "react-icons/hi"
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from '../firebase/config'
 import { toast } from 'react-toastify'
+import { useDispatch } from "react-redux"
+import { REMOVE_ACTIVE_USER, SET_ACTIVE_USER } from '../../redux/features/authSlice'
+import ShowOnLogin, { ShowOnLogout } from '../hiddenLink/hiddenLink'
+
+
 
 
 const logo = (
@@ -31,20 +36,32 @@ const activeLink = ({ isActive}) => (isActive ? `${styles.active}` : "")
 
 const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const [displayName, setdisplayName] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.uid;
-      setdisplayName(user.displayName)
+        if(user.displayName == null){
+          const u1 = user.email.substring(0, user.email.indexOf("@"))
+          const uName = u1.charAt(0).toUpperCase() + u1.slice(1);
+          setDisplayName(uName);
+        } else {
+          setDisplayName(user.displayName);
+        }
+      dispatch(SET_ACTIVE_USER({
+        email: user.email,
+        userName: user.displayName ? user.displayName : displayName,
+        userID: user.uid,
+      }))
       } else {
-        setdisplayName("")
+        setDisplayName("")
+        dispatch(REMOVE_ACTIVE_USER())
       }
     });
-  },[])
+  },[dispatch, displayName])
 
   const toggleMenu = () => {
     setShowMenu(!showMenu)
@@ -91,14 +108,21 @@ const Header = () => {
           </ul>
             <div className={styles["header-right"]} onClick={hideMenu} >
               <span className={styles.links}>
+                <ShowOnLogout>
                 <NavLink to="/login" className={activeLink}>Login</NavLink>
-                <a href='#'>
+                </ShowOnLogout>
+                <ShowOnLogin>
+                <a href='#home' style={{color: "#f07bdd"}}>
                   <FaUserCircle size={20} />
-                  Hello, {displayName}
+                  Hi, {displayName}
                 </a>
-                <NavLink to="/register" className={activeLink}>Register</NavLink>
+                </ShowOnLogin>
+                <ShowOnLogin>
                 <NavLink to="/order-history" className={activeLink}>My Orders</NavLink>
+                </ShowOnLogin>
+                <ShowOnLogin>
                 <NavLink to="/" onClick={logoutUser}>Logout</NavLink>
+                </ShowOnLogin>
               </span>
               {cart}
             </div>

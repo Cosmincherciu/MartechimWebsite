@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styles from "./Auth.module.scss"
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import resetImg from "../../assets/forgot.png"
 import Card from '../../components/card/Card'
 import { sendPasswordResetEmail } from 'firebase/auth'
@@ -11,7 +11,7 @@ import Loader from '../../components/loader/Loader'
 const Reset = () => {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+ 
 
   const resetPassword = (e) => {
     e.preventDefault()
