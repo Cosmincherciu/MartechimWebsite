@@ -24,12 +24,12 @@ const Navbar = () => {
           </li>
           <li>
             <NavLink to="/admin/all-products" className={activeLink}>
-              View Products
+              All Products
             </NavLink>
           </li>
           <li>
-            <NavLink to="/admin/add-products" className={activeLink}>
-              Add Products
+            <NavLink to="/admin/add-product/ADD" className={activeLink}>
+              Add Product
             </NavLink>
           </li>
           <li>
