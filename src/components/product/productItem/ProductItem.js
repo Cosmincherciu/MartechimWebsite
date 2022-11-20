@@ -15,7 +15,7 @@ const ProductItem = ({ product, grid, id, name, price, desc, imageURL }) => {
   return (
     <Card cardClass={grid ? `${styles.grid}` : `${styles.list}`}>
       <div className={styles.img}>
-        <Link to={`/product-details`}>
+        <Link to={`/product-details/${id}`}>
           <img src={imageURL} alt={name}></img>
         </Link>
       </div>

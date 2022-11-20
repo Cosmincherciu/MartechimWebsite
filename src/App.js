@@ -14,6 +14,8 @@ import {
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminOnlyRoute from "./components/adminOnlyRoute/AdminOnlyRoute";
+import ProductDetails from "./components/product/productDetails/ProductDetails";
+import Navbar from "./components/navbar/Navbar";
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
       <BrowserRouter>
         <ToastContainer />
         <Header />
+        {/* <Navbar /> */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<Contact />} />
@@ -38,6 +41,7 @@ function App() {
               </AdminOnlyRoute>
             }
           />
+          <Route path="/product-details/:id" element={<ProductDetails />} />
         </Routes>
         <Footer />
       </BrowserRouter>

@@ -1,13 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./ProductList.module.scss";
 import { BsFillGridFill } from "react-icons/bs";
 import { TiThList } from "react-icons/ti";
 import Search from "../../search/Search";
 import ProductItem from "../productItem/ProductItem";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  FILTER_BY_SEARCH,
+  selectFilteredProducts,
+  SORT_PRODUCTS,
+} from "../../../redux/features/filterSlice";
+import Pagination from "../../pagination/Pagination";
 
 const ProductList = ({ products }) => {
   const [grid, setGrid] = useState(true);
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("latest");
+  const dispatch = useDispatch();
+  const filteredProducts = useSelector(selectFilteredProducts);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage, setProductsPerPage] = useState(8);
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  useEffect(() => {
+    dispatch(SORT_PRODUCTS({ products, sort }));
+  }, [dispatch, products, sort]);
+
+  useEffect(() => {
+    dispatch(FILTER_BY_SEARCH({ products, search }));
+  }, [dispatch, products, search]);
 
   return (
     <div className={styles["product-list"]} id="product">
@@ -20,7 +48,7 @@ const ProductList = ({ products }) => {
           />
           <TiThList size={23} color="#f07bdd" onClick={() => setGrid(false)} />
           <p>
-            <b>10</b> Products found.
+            <b>{filteredProducts.length}</b> Products found.
           </p>
         </div>
         <div>
@@ -28,7 +56,7 @@ const ProductList = ({ products }) => {
         </div>
         <div className={styles.sort}>
           <label>Sort by:</label>
-          <select>
+          <select value={sort} onChange={(e) => setSort(e.target.value)}>
             <option value="latest">Latest</option>
             <option value="lowest-price">Lowest Price</option>
             <option value="highest-price">Highest Price</option>
@@ -42,7 +70,7 @@ const ProductList = ({ products }) => {
           <p>No products found</p>
         ) : (
           <>
-            {products.map((product) => {
+            {currentProducts.map((product) => {
               return (
                 <div key={product.id}>
                   <ProductItem {...product} grid={grid} product={product} />
@@ -52,6 +80,12 @@ const ProductList = ({ products }) => {
           </>
         )}
       </div>
+      <Pagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        productsPerPage={productsPerPage}
+        totalProducts={filteredProducts.length}
+      />
     </div>
   );
 };
